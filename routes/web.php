@@ -1,7 +1,8 @@
 <?php
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Route;
-
+//require 'admin.php';
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,7 +13,21 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::view('/admin', 'admin.dashboard.index');
+Route::group(['prefix'  =>  'admin'], function () {
+
+    Route::get('login', [Admin\LoginController::class,'showLoginForm'])->name('admin.login');
+    Route::post('login', [Admin\LoginController::class,'login'])->name('admin.login.post');
+    Route::get('logout', [Admin\LoginController::class,'logout'])->name('admin.logout');
+    
+    Route::group(['middleware' => ['auth:admin']], function () {
+
+        Route::get('/', function () {
+            return view('admin.dashboard.index');
+        })->name('admin.dashboard');
+    
+    });
+    
+    });
 Route::get('/', function () {
     return view('welcome');
 });
